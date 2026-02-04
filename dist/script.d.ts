@@ -40,6 +40,7 @@ declare class Myzel {
      * of all the people in the care system
      */
     print(): void;
+    printPerson(name: string): string | undefined;
     private males;
     private flintas;
     private all;
@@ -60,7 +61,7 @@ declare class BloomFilter {
     set(myzel: Myzel): void;
     /**
      * checks if the Myzel might have been added before.
-     * when this returns true, this does not mean a certein Myzel was added
+     * when this returns true, this does not mean a certein Myzel was added.
      * when it returns false, a certain Myzel was definitely not added to the filter.
      */
     mightContain(myzel: Myzel): boolean;
@@ -92,7 +93,7 @@ declare function fillFilterWithPreferences(filter: BloomFilter, nots: string[][]
  * @param filter the filter to check against
  */
 declare function getValidMyzel(filter: BloomFilter): Myzel | undefined;
-declare const config: {
+declare let config: {
     ITERATIONS: number;
     males: string[];
     flintas: string[];
@@ -112,7 +113,4 @@ declare function setPreferences(nots: string[][]): string;
  * @returns a valid myzel or undefined if no valid myzel could be found
  */
 declare function getResult(filter_strings: string[]): Myzel | undefined;
-declare const adris_preferences_encoded: string;
-declare const liliths_preferences_encoded: string;
-declare const myzel: Myzel | undefined;
 //# sourceMappingURL=script.d.ts.map

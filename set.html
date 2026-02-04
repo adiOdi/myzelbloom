@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="./style.css">
+</head>
+
+<body>
+    <form action="" id="set" method="get">
+        <div>
+            <label for="config">Config</label>
+            <input type="text" name="config" id="config" placeholder="paste config here">
+        </div>
+        <div>
+            <label for="name">Name</label>
+            <input type="text" name="name" id="name" placeholder="your name">
+        </div>
+        <div>
+            <label for="not_for">I do not want to care for</label>
+            <input type="text" name="not_for" id="not_for" placeholder="bob, alice, dora">
+        </div>
+        <div>
+            <label for="not_from">I do not want to be cared for by</label>
+            <input type="text" name="not_from" id="not_from" placeholder="bob, alice, dora">
+        </div>
+        <div><button type="submit">generate encrypted filter</button></div>
+        <div id="result">
+            <p>send the value below to the others: (copied)</p>
+            <p id="result_string"></p>
+        </div>
+    </form>
+    <script src="dist/script.js"></script>
+    <script src="dist/handle_set_form.js"></script>
+</body>
+
+</html>

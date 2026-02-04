@@ -1,0 +1,69 @@
+"use strict";
+const result_form = document.getElementById('result_form');
+if (result_form) {
+    result_form.addEventListener('submit', (event) => {
+        // handle the form data
+        event.preventDefault();
+        const config_element = document.getElementById('config');
+        const name_element = document.getElementById('name');
+        const filter_element = document.getElementById('filter');
+        const result_block = document.getElementById("result");
+        result_block.classList.remove("visible");
+        let error_happened = false;
+        try {
+            config = JSON.parse(atob(config_element.value));
+            config_element.parentElement?.classList.remove('error');
+        }
+        catch (error) {
+            error_happened = true;
+            config_element.parentElement?.classList.add('error');
+            console.log(error);
+        }
+        const exists = (name) => { return (config.flintas.includes(name) || config.males.includes(name)); };
+        if (!exists(name_element.value)) {
+            console.log("invalid name");
+            name_element.parentElement?.classList.add('error');
+            error_happened = true;
+        }
+        else {
+            name_element.parentElement?.classList.remove('error');
+        }
+        filter_element.parentElement?.classList.remove('error');
+        let filter = new BloomFilter();
+        if (filter_element.value) {
+            let filters = filter_element.value.split(',').map((x) => x.trim());
+            if (filters.length != config.males.length + config.flintas.length) {
+                console.warn("maybe not all filters here?");
+                filter_element.parentElement?.classList.add('error');
+            }
+            filters.forEach(element => {
+                filter.import(element);
+            });
+        }
+        else {
+            filter_element.parentElement?.classList.add('error');
+        }
+        const result = result_block.children[1];
+        const resulting_myzel = getValidMyzel(filter);
+        let result_string = "";
+        if (!error_happened)
+            result_string = resulting_myzel?.printPerson(name_element.value) || "";
+        if (!result_string) {
+            error_happened = true;
+        }
+        if (error_happened) {
+            result_block.classList.remove("visible");
+            return;
+        }
+        if (result && result_block) {
+            result_block.classList.add("visible");
+            result.innerText = result_string || "";
+        }
+    });
+    const urlParams = new URLSearchParams(window.location.search);
+    urlParams.forEach((value, key) => {
+        if (value)
+            document.getElementById(key).value = value;
+    });
+}
+//# sourceMappingURL=handle_result_form.js.map

@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="./style.css">
+</head>
+
+<body>
+    <form action="" id="result_form" method="get">
+        <div>
+            <label for="config">Config</label>
+            <input type="text" name="config" id="config" placeholder="paste config here">
+        </div>
+        <div>
+            <label for="filter">Filter</label>
+            <input type="text" name="filter" id="filter" placeholder="paste filter here">
+        </div>
+        <div>
+            <label for="name">Name</label>
+            <input type="text" name="name" id="name" placeholder="your name">
+        </div>
+        <div><button type="submit">generate Myzel</button></div>
+        <div id="result">
+            <p>your carers: (given those filters)</p>
+            <p id="result_string"></p>
+        </div>
+    </form>
+
+    <script src="dist/script.js"></script>
+    <script src="dist/handle_result_form.js"></script>
+</body>
+
+</html>

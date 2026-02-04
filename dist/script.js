@@ -122,6 +122,24 @@ class Myzel {
             console.log(`${person} is cared for by ${carer_1} and ${carer_2}`);
         }
     }
+    printPerson(name) {
+        let person_index = this.males.findIndex((p) => p.name === name);
+        if (person_index != -1) {
+            const carer_1 = this.males[(person_index + 1) % this.males.length]?.name;
+            const carer_2 = this.all[(person_index + this.males.length) % this.all.length]?.name;
+            console.log(`${name} is cared for by ${carer_1} and ${carer_2}`);
+            return `${name} is cared for by ${carer_1} and ${carer_2}`;
+        }
+        person_index = this.flintas.findIndex((p) => p.name === name);
+        if (person_index != -1) {
+            const carer_1 = this.flintas[(person_index + 1) % this.flintas.length]?.name;
+            const carer_2 = this.all[(person_index + this.males.length * 2) % this.all.length]?.name;
+            console.log(`${name} is cared for by ${carer_1} and ${carer_2}`);
+            return `${name} is cared for by ${carer_1} and ${carer_2}`;
+        }
+        console.log(`person ${name} does not exist`);
+        return undefined;
+    }
     males;
     flintas;
     all;
@@ -166,7 +184,7 @@ class BloomFilter {
     }
     /**
      * checks if the Myzel might have been added before.
-     * when this returns true, this does not mean a certein Myzel was added
+     * when this returns true, this does not mean a certein Myzel was added.
      * when it returns false, a certain Myzel was definitely not added to the filter.
      */
     mightContain(myzel) {
@@ -271,11 +289,11 @@ function getValidMyzel(filter) {
         }
     }
 }
-const config = {
-    ITERATIONS: 720,
-    males: ["adri", "simon", "robert"],
-    flintas: ["lilith", "alma", "erika", "gabi", "kathi"],
-    seed: 42,
+let config = {
+    ITERATIONS: 0,
+    males: [""],
+    flintas: [""],
+    seed: 0,
 };
 /**
  * calculate a bloom filter given some preferences
@@ -307,31 +325,4 @@ function getResult(filter_strings) {
     myzel.print();
     return myzel;
 }
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// testing here
-// adri should not care for simon or lilith
-const adris_preferences_encoded = setPreferences([
-    ["simon", "adri"],
-    ["lilith", "adri"]
-]);
-// lilith should not care for kathi and not be cared for by alma
-const liliths_preferences_encoded = setPreferences([
-    ["kathi", "lilith"],
-    ["lilith", "alma"]
-]);
-console.log(adris_preferences_encoded);
-console.log(liliths_preferences_encoded);
-const myzel = getResult([adris_preferences_encoded, liliths_preferences_encoded]);
-// console.log("now verifying the program works correctly");
-// // verify
-// const all_nots = [
-//     ["simon", "adri"],
-//     ["lilith", "adri"],
-//     ["kathi", "lilith"],
-//     ["lilith", "alma"]
-// ];
-// all_nots.forEach(element => {
-//     console.assert(!myzel?.caresForN(element[0] || "", element[1] || ""));
-//     console.log(`${element[1]} does not care for ${element[0]} correctly`);
-// });
 //# sourceMappingURL=script.js.map

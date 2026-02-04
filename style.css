@@ -1,0 +1,78 @@
+.error::after {
+    content: "check entry";
+    color: rgb(94, 1, 1);
+    text-align: end;
+    display: block;
+}
+
+.error>input {
+    border-color: red;
+    background-color: lightcoral;
+}
+
+#result {
+    display: none;
+}
+
+#result.visible {
+    display: initial;
+}
+
+#result_string {
+    text-align: center;
+    font-weight: bold;
+    border: 2px solid #ccc;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    margin: 20px;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border: 1px solid #ccc;
+    padding: 2em;
+    margin: auto;
+    width: fit-content;
+    border-radius: 1em;
+}
+
+form>div {
+    margin: 1em;
+}
+
+form>div>p {
+    margin: 5px;
+}
+
+label {
+    display: block;
+    margin-bottom: 10px;
+}
+
+input {
+    padding: 10px;
+    border-radius: 5px;
+    width: 100%;
+    min-width: 300px;
+    border-color: #ccc;
+    box-sizing: border-box;
+}
+
+button[type="submit"] {
+    background-color: rgb(51, 122, 150);
+    color: white;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+button[type="submit"]:hover {
+    background-color: rgb(21, 70, 90);
+}

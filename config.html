@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="./style.css">
+</head>
+
+<body>
+    <form action="" id="config_form" method="get">
+        <div>
+            <label for="flintas">flintas to add</label>
+            <input type="text" name="flintas" id="flintas" placeholder="bob, alice, dora">
+        </div>
+        <div>
+            <label for="males">males to add</label>
+            <input type="text" name="males" id="males" placeholder="bob, alice, dora">
+        </div>
+        <div>
+            <label for="iterations">iterations to check</label>
+            <input type="number" name="iterations" id="iterations" value="720">
+        </div>
+        <div>
+            <label for="seed">seed</label>
+            <input type="number" name="seed" id="seed" value="42">
+        </div>
+        <div><button type="submit">generate config</button></div>
+        <div id="result">
+            <p>send the value below to the others: (copied)</p>
+            <p id="result_string"></p>
+        </div>
+    </form>
+
+    <script src="dist/script.js"></script>
+    <script src="dist/handle_config_form.js"></script>
+</body>
+
+</html>
