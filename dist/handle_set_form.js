@@ -1,18 +1,20 @@
 "use strict";
 const set_form = document.getElementById('set');
 if (set_form) {
+    const config_element = document.getElementById('config');
+    const name_element = document.getElementById('name');
+    const not_for_element = document.getElementById('not_for');
+    const not_from_element = document.getElementById('not_from');
+    const elements = { config: config_element, name: name_element, not_for: not_for_element, not_from: not_from_element };
     set_form.addEventListener('submit', (event) => {
         // handle the form data
         event.preventDefault();
-        const config_element = document.getElementById('config');
-        const name_element = document.getElementById('name');
-        const not_for_element = document.getElementById('not_for');
-        const not_from_element = document.getElementById('not_from');
         const result_block = document.getElementById("result");
         result_block.classList.remove("visible");
         let error_happened = false;
         try {
             config = JSON.parse(atob(config_element.value));
+            localStorage.setItem("config", config_element.value);
             config_element.parentElement?.classList.remove('error');
         }
         catch (error) {
@@ -34,6 +36,7 @@ if (set_form) {
         else {
             name_element.parentElement?.classList.remove('error');
             preferences.name = name_element.value;
+            localStorage.setItem("name", name_element.value);
         }
         not_for_element.parentElement?.classList.remove('error');
         if (not_for_element.value) {
@@ -47,6 +50,9 @@ if (set_form) {
                     return;
                 }
             });
+            if (!error_happened) {
+                localStorage.setItem("not_for", not_for_element.value);
+            }
         }
         not_from_element.parentElement?.classList.remove('error');
         if (not_from_element.value) {
@@ -60,6 +66,9 @@ if (set_form) {
                     return;
                 }
             });
+            if (!error_happened) {
+                localStorage.setItem("not_from", not_from_element.value);
+            }
         }
         console.log(preferences);
         if (error_happened) {
@@ -84,11 +93,22 @@ if (set_form) {
         navigator.clipboard.writeText(result_string)
             .then(() => console.log('Content written successfully'))
             .catch(err => console.error('Could not write text:', err));
+        localStorage.setItem("filters", result_string);
     });
     const urlParams = new URLSearchParams(window.location.search);
-    urlParams.forEach((value, key) => {
+    for (const key in elements) {
+        if (!Object.hasOwn(elements, key))
+            continue;
+        const element = elements[key];
+        if (!element || !key)
+            continue;
+        const value = localStorage.getItem(key);
         if (value)
-            document.getElementById(key).value = value;
+            element.value = value;
+    }
+    urlParams.forEach((value, key) => {
+        if (value && elements[key])
+            elements[key].value = value;
     });
 }
 //# sourceMappingURL=handle_set_form.js.map

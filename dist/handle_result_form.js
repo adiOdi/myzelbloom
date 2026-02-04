@@ -1,17 +1,19 @@
 "use strict";
 const result_form = document.getElementById('result_form');
 if (result_form) {
+    const config_element = document.getElementById('config');
+    const name_element = document.getElementById('name');
+    const filter_element = document.getElementById('filters');
+    const elements = { config: config_element, name: name_element, filters: filter_element };
     result_form.addEventListener('submit', (event) => {
         // handle the form data
         event.preventDefault();
-        const config_element = document.getElementById('config');
-        const name_element = document.getElementById('name');
-        const filter_element = document.getElementById('filter');
         const result_block = document.getElementById("result");
         result_block.classList.remove("visible");
         let error_happened = false;
         try {
             config = JSON.parse(atob(config_element.value));
+            localStorage.setItem("config", config_element.value);
             config_element.parentElement?.classList.remove('error');
         }
         catch (error) {
@@ -27,6 +29,7 @@ if (result_form) {
         }
         else {
             name_element.parentElement?.classList.remove('error');
+            localStorage.setItem("name", name_element.value);
         }
         filter_element.parentElement?.classList.remove('error');
         let filter = new BloomFilter();
@@ -39,6 +42,7 @@ if (result_form) {
             filters.forEach(element => {
                 filter.import(element);
             });
+            localStorage.setItem("filters", filter_element.value);
         }
         else {
             filter_element.parentElement?.classList.add('error');
@@ -61,9 +65,19 @@ if (result_form) {
         }
     });
     const urlParams = new URLSearchParams(window.location.search);
-    urlParams.forEach((value, key) => {
+    for (const key in elements) {
+        if (!Object.hasOwn(elements, key))
+            continue;
+        const element = elements[key];
+        if (!element || !key)
+            continue;
+        const value = localStorage.getItem(key);
         if (value)
-            document.getElementById(key).value = value;
+            element.value = value;
+    }
+    urlParams.forEach((value, key) => {
+        if (value && elements[key])
+            elements[key].value = value;
     });
 }
 //# sourceMappingURL=handle_result_form.js.map

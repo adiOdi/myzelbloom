@@ -64,13 +64,26 @@ input {
     box-sizing: border-box;
 }
 
-button[type="submit"] {
+button[type="submit"],
+a {
     background-color: rgb(51, 122, 150);
     color: white;
     padding: 10px;
     border: none;
     border-radius: 5px;
     cursor: pointer;
+}
+
+a {
+    text-decoration: none;
+    position: absolute;
+    bottom: 1em;
+    font-size: small;
+    background-color: rgb(160, 206, 207);
+}
+
+a:last-of-type {
+    right: 1em;
 }
 
 button[type="submit"]:hover {
