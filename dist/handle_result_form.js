@@ -52,16 +52,13 @@ if (result_form) {
         let result_string = "";
         if (!error_happened)
             result_string = resulting_myzel?.printPerson(name_element.value) || "";
-        if (!result_string) {
-            error_happened = true;
-        }
         if (error_happened) {
             result_block.classList.remove("visible");
             return;
         }
         if (result && result_block) {
             result_block.classList.add("visible");
-            result.innerText = result_string || "";
+            result.innerText = result_string || "no valid Myzel possible";
         }
     });
     const urlParams = new URLSearchParams(window.location.search);
