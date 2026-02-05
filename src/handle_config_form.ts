@@ -2,10 +2,11 @@
 const config_form = document.getElementById('config_form') as HTMLFormElement;
 if (config_form) {
     const iterations_element = document.getElementById('iterations') as HTMLInputElement;
+    const bloomlength_element = document.getElementById('bloomlength') as HTMLInputElement;
     const seed_element = document.getElementById('seed') as HTMLInputElement;
     const flintas_element = document.getElementById('flintas') as HTMLInputElement;
     const males_element = document.getElementById('males') as HTMLInputElement;
-    const elements: { [key: string]: HTMLInputElement } = { iterations: iterations_element, seed: seed_element, flintas: flintas_element, males: males_element };
+    const elements: { [key: string]: HTMLInputElement } = { iterations: iterations_element, seed: seed_element, flintas: flintas_element, males: males_element, bloomlength: bloomlength_element };
     config_form.addEventListener('submit', (event) => {
         // handle the form data
         event.preventDefault();
@@ -33,6 +34,15 @@ if (config_form) {
         } else {
             localStorage.setItem("iterations", iterations_element.value);
             iterations_element.parentElement?.classList.remove('error');
+        }
+        config.BLOOMLENGTH = parseInt(bloomlength_element.value);
+        if (!config.BLOOMLENGTH) {
+            console.log("invalid BLOOMLENGTH");
+            bloomlength_element.parentElement?.classList.add('error');
+            error_happened = true;
+        } else {
+            localStorage.setItem("bloomlength", bloomlength_element.value);
+            bloomlength_element.parentElement?.classList.remove('error');
         }
         if (error_happened) {
             result_block.classList.remove("visible");

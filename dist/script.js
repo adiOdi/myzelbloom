@@ -32,26 +32,94 @@ class Myzel {
             const new_person = { id, name };
             this.flintas.push(new_person);
         });
+        this.males.sort((a, b) => { return a.id - b.id; });
+        this.flintas.sort((a, b) => { return a.id - b.id; });
         this.all = this.males.concat(this.flintas);
+        this.permutation_counter = 0;
+        const factorial = (n) => {
+            return n <= 1 ? 1 : Array.from({ length: n }, (_, i) => i + 1).reduce((acc, val) => acc * val, 1);
+        };
+        this.males_length_factorial = factorial(this.males.length);
+        const nr_permutations = factorial(this.flintas.length) * this.males_length_factorial;
+        if (nr_permutations <= config.ITERATIONS) {
+            // when we have that many iterations, we should just try all permutations
+            config.ITERATIONS = nr_permutations;
+            this.use_random_mix = false;
+        }
+        else {
+            this.use_random_mix = true;
+        }
     }
     /**
      * Shuffle the males and flintas lists in random order.
      */
     mix() {
-        this.males.sort((a, b) => { return PseudoRandomGenerator.instance().next() - 0.5; });
-        this.flintas.sort((a, b) => { return PseudoRandomGenerator.instance().next() - 0.5; });
+        if (this.use_random_mix) {
+            this.males.sort((a, b) => { return PseudoRandomGenerator.instance().next() - 0.5; });
+            this.flintas.sort((a, b) => { return PseudoRandomGenerator.instance().next() - 0.5; });
+        }
+        else {
+            this.nextPermutation(this.males);
+            if (++this.permutation_counter >= this.males_length_factorial) {
+                this.nextPermutation(this.flintas);
+                this.permutation_counter = 0;
+            }
+        }
         this.all = this.males.concat(this.flintas);
+    }
+    /**
+     * generates the next ordering of people,
+     * in the end every order of males and females has been tried.
+     * it dos not return anything, but changes the state of the lists.
+     */
+    nextPermutation(nums) {
+        // Helper function to reverse a portion of the array
+        const reverse = (start, end) => {
+            while (start < end) {
+                [nums[start], nums[end]] = [nums[end], nums[start]];
+                start++;
+                end--;
+            }
+        };
+        let n = nums.length;
+        let k = -1;
+        // Step 1: Find the largest index k such that nums[k] < nums[k + 1]
+        for (let i = n - 2; i >= 0; i--) {
+            if (nums[i].id < nums[i + 1].id) {
+                k = i;
+                break;
+            }
+        }
+        // Step 2: If no such index exists, reverse the entire array
+        if (k === -1) {
+            reverse(0, n - 1);
+            return;
+        }
+        // Step 3: Find the largest index l greater than k such that nums[k] < nums[l]
+        let l = -1;
+        for (let i = n - 1; i > k; i--) {
+            if (nums[i].id > nums[k].id) {
+                l = i;
+                break;
+            }
+        }
+        // Step 4: Swap the values at indices k and l
+        [nums[k], nums[l]] = [nums[l], nums[k]];
+        // Step 5: Reverse the sequence from index k + 1 to the end
+        reverse(k + 1, n - 1);
     }
     /**
      * Calculates two hashes for the Myzel.
      */
     hash() {
+        const all_nr = this.all.map(person => person.id).reduce((a, b) => 10 * a + b);
+        return [all_nr % config.BLOOMLENGTH];
         let i = 0;
-        const maleHashValues = this.males.map(person => person.id * ++i % BloomFilter.BLOOMLENGTH);
-        let hashValue1 = maleHashValues.reduce((a, b) => (a + b) % BloomFilter.BLOOMLENGTH, 0);
+        const maleHashValues = this.males.map(person => person.id * ++i % config.BLOOMLENGTH);
+        let hashValue1 = maleHashValues.reduce((a, b) => (a + b) % config.BLOOMLENGTH, 0);
         i = 321;
-        const flintaHashValues = this.flintas.map(person => person.id * ++i % BloomFilter.BLOOMLENGTH);
-        let hashValue2 = flintaHashValues.reduce((a, b) => (a + b) % BloomFilter.BLOOMLENGTH, 0);
+        const flintaHashValues = this.flintas.map(person => person.id * ++i % config.BLOOMLENGTH);
+        let hashValue2 = flintaHashValues.reduce((a, b) => (a + b) % config.BLOOMLENGTH, 0);
         return [Math.abs(hashValue1), Math.abs(hashValue2)];
     }
     // helper function to check if two persons of same gender are next to each other (b cares for a)
@@ -122,6 +190,14 @@ class Myzel {
             console.log(`${person} is cared for by ${carer_1} and ${carer_2}`);
         }
     }
+    printList() {
+        let string = "";
+        this.all.forEach((p) => {
+            string += p.name + ", ";
+        });
+        string = string.slice(0, -2);
+        console.log(string);
+    }
     printPerson(name) {
         let person_index = this.males.findIndex((p) => p.name === name);
         if (person_index != -1) {
@@ -143,6 +219,9 @@ class Myzel {
     males;
     flintas;
     all;
+    permutation_counter;
+    males_length_factorial;
+    use_random_mix;
 }
 /**
  * a bloomfilter can reveal if a thing has definitely never been added.
@@ -152,7 +231,7 @@ class Myzel {
  */
 class BloomFilter {
     constructor() {
-        this.bloomfilter = new Uint32Array(BloomFilter.BLOOMLENGTH / 32);
+        this.bloomfilter = new Uint32Array(Math.ceil(config.BLOOMLENGTH / 32));
     }
     // set the bloom filter at a specific index to 1
     setAtIndex(index) {
@@ -221,7 +300,6 @@ class BloomFilter {
             this.bloomfilter[index] = new_value;
         }
     }
-    static BLOOMLENGTH = 128;
     bloomfilter;
 }
 class PseudoRandomGenerator {
@@ -291,6 +369,7 @@ function getValidMyzel(filter) {
 }
 let config = {
     ITERATIONS: 0,
+    BLOOMLENGTH: 0,
     males: [""],
     flintas: [""],
     seed: 0,

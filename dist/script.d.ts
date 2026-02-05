@@ -18,6 +18,12 @@ declare class Myzel {
      */
     mix(): void;
     /**
+     * generates the next ordering of people,
+     * in the end every order of males and females has been tried.
+     * it dos not return anything, but changes the state of the lists.
+     */
+    nextPermutation(nums: Person[]): void;
+    /**
      * Calculates two hashes for the Myzel.
      */
     hash(): number[];
@@ -40,10 +46,14 @@ declare class Myzel {
      * of all the people in the care system
      */
     print(): void;
+    printList(): void;
     printPerson(name: string): string | undefined;
     private males;
     private flintas;
     private all;
+    private permutation_counter;
+    private males_length_factorial;
+    private use_random_mix;
 }
 /**
  * a bloomfilter can reveal if a thing has definitely never been added.
@@ -68,7 +78,6 @@ declare class BloomFilter {
     print(): void;
     export(): string;
     import(checksum: string): void;
-    static readonly BLOOMLENGTH = 128;
     private bloomfilter;
 }
 declare class PseudoRandomGenerator {
@@ -95,6 +104,7 @@ declare function fillFilterWithPreferences(filter: BloomFilter, nots: string[][]
 declare function getValidMyzel(filter: BloomFilter): Myzel | undefined;
 declare let config: {
     ITERATIONS: number;
+    BLOOMLENGTH: number;
     males: string[];
     flintas: string[];
     seed: number;
