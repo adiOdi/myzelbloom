@@ -112,8 +112,6 @@ class Myzel {
      * Calculates two hashes for the Myzel.
      */
     hash() {
-        const all_nr = this.all.map(person => person.id).reduce((a, b) => 10 * a + b);
-        return [all_nr % config.BLOOMLENGTH];
         let i = 0;
         const maleHashValues = this.males.map(person => person.id * ++i % config.BLOOMLENGTH);
         let hashValue1 = maleHashValues.reduce((a, b) => (a + b) % config.BLOOMLENGTH, 0);
@@ -231,12 +229,12 @@ class Myzel {
  */
 class BloomFilter {
     constructor() {
-        this.bloomfilter = new Uint32Array(Math.ceil(config.BLOOMLENGTH / 32));
+        this.bloomfilter = new Uint8Array(Math.ceil(config.BLOOMLENGTH / 8));
     }
     // set the bloom filter at a specific index to 1
     setAtIndex(index) {
-        let number_index = Math.floor(index / 32);
-        let inner_index = index % 32;
+        let number_index = Math.floor(index / 8);
+        let inner_index = index % 8;
         let filter = this.bloomfilter[number_index];
         if (filter != undefined) {
             filter |= (1) << inner_index;
@@ -245,8 +243,8 @@ class BloomFilter {
     }
     // get the bloom filter at a specific index
     getAtIndex(index) {
-        let number_index = Math.floor(index / 32);
-        let inner_index = index % 32;
+        let number_index = Math.floor(index / 8);
+        let inner_index = index % 8;
         let filter = this.bloomfilter[number_index];
         if (filter)
             return ((filter >> inner_index) & 1) == 1;
@@ -276,28 +274,42 @@ class BloomFilter {
     }
     print() {
         console.log("filter is:");
-        let checksum = "";
         for (const element of this.bloomfilter) {
-            console.log(element.toString(2).padStart(32, '0'));
-            checksum = checksum.concat(element.toString(16).padStart(8, '0'));
+            console.log(element.toString(2).padStart(8, '0'));
         }
-        console.log("checksum is: " + checksum);
+        console.log("checksum is: " + this.export());
     }
     export() {
+        console.log("filter is:");
+        for (const element of this.bloomfilter) {
+            console.log(element.toString(2).padStart(8, '0'));
+        }
+        let string = String.fromCodePoint(...this.bloomfilter);
+        console.log("string is:", string);
+        return btoa(string).replaceAll('=', '~').replaceAll('+', '-').replaceAll('/', '_');
         let checksum = "";
         for (const element of this.bloomfilter) {
-            checksum = checksum.concat(element.toString(16).padStart(8, '0'));
+            checksum = checksum.concat(element.toString(32).padStart(7, '0'));
         }
         return checksum;
     }
     import(checksum) {
+        let string = atob(checksum.replaceAll('~', '=').replaceAll('-', '+').replaceAll('_', '/'));
+        console.log("string is:", string);
         for (let index = 0; index < this.bloomfilter.length; index++) {
-            let new_value = parseInt(checksum.substring(index * 8, index * 8 + 8), 16);
-            const old_value = this.bloomfilter[index];
-            if (old_value) {
-                new_value |= old_value;
-            }
-            this.bloomfilter[index] = new_value;
+            this.bloomfilter[index] = string.charCodeAt(index);
+        }
+        // for (let index = 0; index < this.bloomfilter.length; index++) {
+        //     let new_value = parseInt(checksum.substring(index * 7, index * 7 + 7), 32);
+        //     const old_value = this.bloomfilter[index];
+        //     if (old_value) {
+        //         new_value |= old_value;
+        //     }
+        //     this.bloomfilter[index] = new_value;
+        // }
+        console.log("filter is:");
+        for (const element of this.bloomfilter) {
+            console.log(element.toString(2).padStart(8, '0'));
         }
     }
     bloomfilter;
@@ -404,4 +416,22 @@ function getResult(filter_strings) {
     myzel.print();
     return myzel;
 }
+/**
+ * filter is: script.ts:320:17
+10100101 script.ts:322:21
+10101010 script.ts:322:21
+11000111 script.ts:322:21
+10101111 script.ts:322:21
+string is: ¥ªÇ¯ script.ts:325:17
+parHrw==
+10100101 script.ts:348:21
+10101010 script.ts:348:21
+11000111 script.ts:348:21
+10101111
+ */
+/**
+128:parHr3PvnevHu0rptm3bJg==
+120:9qyfqm+v6u2r8nvexINH
+ 80:d+7/q///3O2rbw==
+*/ 
 //# sourceMappingURL=script.js.map

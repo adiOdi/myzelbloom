@@ -123,4 +123,22 @@ declare function setPreferences(nots: string[][]): string;
  * @returns a valid myzel or undefined if no valid myzel could be found
  */
 declare function getResult(filter_strings: string[]): Myzel | undefined;
+/**
+ * filter is: script.ts:320:17
+10100101 script.ts:322:21
+10101010 script.ts:322:21
+11000111 script.ts:322:21
+10101111 script.ts:322:21
+string is: ¥ªÇ¯ script.ts:325:17
+parHrw==
+10100101 script.ts:348:21
+10101010 script.ts:348:21
+11000111 script.ts:348:21
+10101111
+ */
+/**
+128:parHr3PvnevHu0rptm3bJg==
+120:9qyfqm+v6u2r8nvexINH
+ 80:d+7/q///3O2rbw==
+*/ 
 //# sourceMappingURL=script.d.ts.map
